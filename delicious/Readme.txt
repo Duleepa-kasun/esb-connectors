@@ -16,7 +16,7 @@ STEPS:
     If you want to use another location, please change it accordigly in the pom.xml as follows.
 
           <carbon.zip>
-            ${basedir}/../test/wso2esb-${esb.version}.zip
+            ${basedir}/src/test/wso2esb-${esb.version}.zip
           </carbon.zip>
 
 2. Make sure the delicious test suite is enabled (as given below) and all other test suites are commented in the "testng.xml" file.
