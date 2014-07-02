@@ -1,8 +1,9 @@
 {"json_payload":
     {
-    "username":"%s",
-    "password":"%s",
-    "Apiurl":"%s",
-    "method":"getRecentPosts"
+    "username":"invalidusername",
+    "password":"invalidpassword",
+    "Apiurl":"address",
+    "method":"getRecentPosts",
+    "testType":"negative"
     }
 }

@@ -1,8 +1,8 @@
 {"json_payload":
     {
-    "username":"dummyUsername",
-    "password":"dummyPassword",
-    "Apiurl":"dummyApi",
+    "username":"invalidusername",
+    "password":"invalidpassword",
+    "Apiurl":"address",
     "method":"allTagsBundles",
     "testType":"negative"
 

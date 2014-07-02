@@ -4,6 +4,6 @@
     "password":"%s",
     "Apiurl":"%s",
     "method":"deletePost",
-    "delUrl":"www.example_connector.com"
+    "delUrl":"bookmarkurl"
     }
 }

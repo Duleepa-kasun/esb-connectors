@@ -5,7 +5,7 @@
     "Apiurl":"%s",
     "method":"addNewPost",
     "testType":"mandatory",
-    "inputUrl":"www.example_connector.com",
+    "inputUrl":"bookmarkurl",
     "inputDescription":"test_url"
     }
 }

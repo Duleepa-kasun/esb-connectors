@@ -23,41 +23,14 @@ import org.apache.commons.codec.binary.Base64;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-import org.wso2.carbon.automation.api.clients.proxy.admin.ProxyServiceAdminClient;
 import org.wso2.carbon.connector.integration.test.common.ConnectorIntegrationUtil;
-import org.wso2.carbon.mediation.library.stub.MediationLibraryAdminServiceStub;
-import org.wso2.carbon.mediation.library.stub.upload.MediationLibraryUploaderStub;
 import org.wso2.connector.integration.test.base.ConnectorIntegrationTestBase;
 
 import javax.xml.namespace.QName;
-import java.util.Properties;
 
 public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTestBase {
 
     protected static final String CONNECTOR_NAME = "delicious";
-
-    protected MediationLibraryUploaderStub mediationLibUploadStub = null;
-
-    protected MediationLibraryAdminServiceStub adminServiceStub = null;
-
-    protected ProxyServiceAdminClient proxyAdmin;
-
-    protected String repoLocation = null;
-
-    protected String deliciousConnectorFileName = CONNECTOR_NAME + ".zip";
-
-    protected Properties deliciousConnectorProperties = null;
-
-    protected String pathToProxiesDirectory = null;
-
-    //  protected String pathToRequestsDirectory = null;
-
-    // Variables for store results of dependent methods
-    protected String addCommentMethodCommentId;
-    protected String addTagMethodTagId;
-    private String username;
-    private String password;
-    private String Apiurl;
     private String validAuthorization;
     private String invalidAuthorization;
 
@@ -100,15 +73,14 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("postGetAll" + omElementC.toString());
+        System.out.println("postGetAll" + omElementC.toString()+"\n");
 
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/all", "", validAuthorization);
 
         System.out.println("postGetAll" + omElementD.toString());
 
-        Assert.assertTrue(omElementC.toString().equals(omElementD.toString()));
-
+        Assert.assertTrue(omElementC.getFirstElement().toString().equals(omElementD.getFirstElement().toString()));
     }
 
 
@@ -122,21 +94,19 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
 
         String rawString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
         rawString = rawString.replace("test_url",connectorProperties.getProperty("inputDescription"));
+        rawString = rawString.replace("bookmarkurl",connectorProperties.getProperty("inputurl"));
         final String jsonString = addCredentials(rawString);
 
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("addNewPost connector" + omElementC.toString());
+        System.out.println("addNewPost connector" + omElementC.toString()+"\n");
 
-        String parameters = "&url=www.example_direct.com&description=test_url2";
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
-        //OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/add?" + parameters, "", validAuthorization);
         OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/recent?&count=1", "", validAuthorization);
 
         System.out.println("addNewPost direct" + omElementD.toString());
 
-        //Assert.assertTrue(omElementC.toString().equals(omElementD.toString()));
         Assert.assertTrue(omElementD.getFirstElement().getAttributeValue(QName.valueOf("description")).equals(connectorProperties.getProperty("inputDescription")));
 
     }
@@ -156,7 +126,7 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("postAllHashes connector" + omElementC.toString());
+        System.out.println("postAllHashes connector" + omElementC.toString()+"\n");
 
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/all?hashes", "", validAuthorization);
@@ -182,7 +152,7 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("getDates connector" + omElementC.toString());
+        System.out.println("getDates connector" + omElementC.toString()+"\n");
 
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/dates", "", validAuthorization);
@@ -202,28 +172,22 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
 
         String jsonRequestFilePath = pathToResourcesDirectory + "deletePost.txt";
 
-        final String rawString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        String rawString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        rawString = rawString.replace("bookmarkurl",connectorProperties.getProperty("inputurl"));
         final String jsonString = addCredentials(rawString);
 
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("deletePost connector" + omElementC.toString());
+        System.out.println("deletePost connector" + omElementC.toString()+"\n");
 
-        //String parameters = "&url=www.example_direct.com";
+        String parameters = "&url="+connectorProperties.getProperty("inputurl");
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
-        //OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/delete?" + parameters, "", validAuthorization);
-
-       // System.out.println("deletePost direct" + omElementD.toString());
-
-       // Assert.assertTrue(omElementC.toString().equals(omElementD.toString()));
-
-        OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/recent?&count=1", "", validAuthorization);
+        OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/get?"+parameters, "", validAuthorization);
 
         System.out.println("addNewPost direct" + omElementD.toString());
 
-        //Assert.assertTrue(omElementC.toString().equals(omElementD.toString()));
-        Assert.assertTrue(omElementD.getFirstElement().getAttributeValue(QName.valueOf("description"))!=connectorProperties.getProperty("inputDescription"));
+        Assert.assertTrue(omElementD.getAttributeValue(QName.valueOf("code")).equals("no bookmarks"));
 
 
     }
@@ -242,7 +206,7 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("getPosts connector" + omElementC.toString());
+        System.out.println("getPosts connector" + omElementC.toString()+"\n");
 
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/get", "", validAuthorization);
@@ -268,8 +232,7 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("getRecentPosts connector" + omElementC.toString());
-
+        System.out.println("getRecentPosts connector" + omElementC.toString()+"\n");
 
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/recent", "", validAuthorization);
@@ -295,7 +258,7 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("suggestPopularTags connector" + omElementC.toString());
+        System.out.println("suggestPopularTags connector" + omElementC.toString()+"\n");
         String parameters = "&url=www.yahoo.com";
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/suggest?" + parameters, "", validAuthorization);
@@ -321,7 +284,7 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("lastUpdatedTime connector" + omElementC.toString());
+        System.out.println("lastUpdatedTime connector" + omElementC.toString()+"\n");
 
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/update", "", validAuthorization);
@@ -347,11 +310,10 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         final String rawString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
         final String jsonString = addCredentials(rawString);
 
-
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("getTags connector"+omElementC.toString());
+        System.out.println("getTags connector"+omElementC.toString()+"\n");
 
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/tags/get", "", validAuthorization);
@@ -375,18 +337,17 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         final String rawString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
         final String jsonString = addCredentials(rawString);
 
-
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC= responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("allTagsBundles connector"+omElementC.toString());
+        System.out.println("allTagsBundles connector"+omElementC.toString()+"\n");
 
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD=responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl")+"/v1/tags/bundles/all", "",validAuthorization);
 
         System.out.println("allTagsBundles direct"+omElementD.toString());
 
-        Assert.assertTrue(omElementC.toString().equals(omElementD.toString()));
+        Assert.assertTrue(omElementC.getFirstElement().toString().equals(omElementD.getFirstElement().toString()));
 
     }
 
@@ -404,18 +365,17 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         String rawString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
         final String jsonString = addCredentials(rawString);
 
-
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("setTagsBundles connector"+omElementC.toString());
-
+        System.out.println("setTagsBundles connector"+omElementC.toString()+"\n");
+        String parameters ="&bundle="+connectorProperties.getProperty("bundle");
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
-        OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/tags/bundles/set?bundle=" +connectorProperties.getProperty("bundle")+"&tags="+connectorProperties.getProperty("tags"), "", validAuthorization);
+        OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/tags/bundles/all?" +parameters, "", validAuthorization);
 
         System.out.println("setTagsBundles Direct"+omElementD.toString());
 
-        Assert.assertTrue(omElementC.toString().equals(omElementD.toString()));
+        Assert.assertTrue(omElementD.getFirstElement().getAttributeValue(QName.valueOf("name")).equals(connectorProperties.getProperty("bundle")));
 
     }
 
@@ -431,19 +391,12 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         String rawString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
         final String jsonString = addCredentials(rawString);
 
-
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
         System.out.println("deleteTagsBundles connector :"+omElementC.toString());
 
-        ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
-        OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") +"/v1/tags/bundles/delete?bundle=" +connectorProperties.getProperty("bundle"), "", validAuthorization);
-
-        System.out.println("deleteTagsBundles Direct :"+omElementD.toString());
-
-        Assert.assertTrue(omElementC.toString().equals(omElementD.toString()));
-        //  Assert.assertTrue(!omElementD.toString().contains(addTagMethodTagId));
+        Assert.assertTrue(omElementC.toString().equals("<result>done</result>"));
     }
 
 
@@ -475,12 +428,10 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         rawString = rawString.replace("address",connectorProperties.getProperty("Apiurl"));
         final String jsonString = addCredentials(rawString);
 
-        System.out.println(jsonString);
-
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("postGetAll" + omElementC.toString());
+        System.out.println("postGetAll" + omElementC.toString()+"\n");
 
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/all", "", invalidAuthorization);
@@ -502,13 +453,10 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         String rawString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
         final String jsonString = addCredentials(rawString);
 
-
-        System.out.println(jsonString);
-
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("addNewPost connector" + omElementC.toString());
+        System.out.println("addNewPost connector" + omElementC.toString()+"\n");
 
         String parameters = "&url=&description=";
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
@@ -535,12 +483,10 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         rawString = rawString.replace("address",connectorProperties.getProperty("Apiurl"));
         final String jsonString = addCredentials(rawString);
 
-        System.out.println(jsonString);
-
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("postAllHashes connector" + omElementC.toString());
+        System.out.println("postAllHashes connector" + omElementC.toString()+"\n");
 
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/all?hashes", "", invalidAuthorization);
@@ -565,12 +511,10 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         rawString = rawString.replace("address",connectorProperties.getProperty("Apiurl"));
         final String jsonString = addCredentials(rawString);
 
-        System.out.println(jsonString);
-
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("getDates connector" + omElementC.toString());
+        System.out.println("getDates connector" + omElementC.toString()+"\n");
 
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/dates", "", invalidAuthorization);
@@ -591,12 +535,11 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         String jsonRequestFilePath = pathToResourcesDirectory + "negative/deletePost.txt";
         String rawString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
         final String jsonString = addCredentials(rawString);
-        System.out.println(jsonString);
 
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("deletePost connector" + omElementC.toString());
+        System.out.println("deletePost connector" + omElementC.toString()+"\n");
 
         String parameters = "&url=www.dummyurl.com";
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
@@ -614,24 +557,17 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
     @Test(priority = 2, groups = {"wso2.esb"}, description = "delicious {getPosts} integration test with Negetive parameters")
     public void testDeliciousgetPostsWithNegetiveParameters() throws Exception {
 
-       /* final String jsonString =
-                "{" + '"' + "json_payload" + '"' + ": {" +
-                        '"' + "username" + '"' + ":" + '"' + "username" + '"' + ","
-                        + '"' + "password" + '"' + ":" + '"' + "password" + '"' + ","
-                        + '"' + "Apiurl" + '"' + ":" + '"' + "https://api.del.icio.us" + '"' + ","
-                        + '"' + "testType" + '"' + ":" + '"' + "negative" + '"' + ","
-                        + '"' + "method" + '"' + ":" + '"' + "getPosts" + '"' + " } }";*/
-
         String jsonRequestFilePath = pathToResourcesDirectory + "negative/getPosts.txt";
         String rawString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        rawString = rawString.replace("invalidusername",connectorProperties.getProperty("invalidusername"));
+        rawString = rawString.replace("invalidpassword",connectorProperties.getProperty("invalidpassword"));
+        rawString = rawString.replace("address",connectorProperties.getProperty("Apiurl"));
         final String jsonString = addCredentials(rawString);
-
-        System.out.println(jsonString);
 
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("getPosts connector" + omElementC.toString());
+        System.out.println("getPosts connector" + omElementC.toString()+"\n");
 
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/get", "", invalidAuthorization);
@@ -649,21 +585,17 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
     @Test(priority = 2, groups = {"wso2.esb"}, description = "delicious {getRecentPosts} integration test with Negetive parameters")
     public void testDeliciousgetRecentPostsWithNegetiveParameters() throws Exception {
 
-        final String jsonString =
-                "{" + '"' + "json_payload" + '"' + ": {" +
-                        '"' + "username" + '"' + ":" + '"' + "username" + '"' + ","
-                        + '"' + "password" + '"' + ":" + '"' + "password" + '"' + ","
-                        + '"' + "Apiurl" + '"' + ":" + '"' + "https://api.del.icio.us" + '"' + ","
-                        + '"' + "testType" + '"' + ":" + '"' + "negative" + '"' + ","
-                        + '"' + "method" + '"' + ":" + '"' + "getRecentPosts" + '"' + " } }";
-
-        System.out.println(jsonString);
+        String jsonRequestFilePath = pathToResourcesDirectory + "negative/getRecentPosts.txt";
+        String rawString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        rawString = rawString.replace("invalidusername",connectorProperties.getProperty("invalidusername"));
+        rawString = rawString.replace("invalidpassword",connectorProperties.getProperty("invalidpassword"));
+        rawString = rawString.replace("address",connectorProperties.getProperty("Apiurl"));
+        final String jsonString = addCredentials(rawString);
 
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("getRecentPosts connector" + omElementC.toString());
-
+        System.out.println("getRecentPosts connector" + omElementC.toString()+"\n");
 
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/recent", "", invalidAuthorization);
@@ -681,19 +613,14 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
     @Test(priority = 2, groups = {"wso2.esb"}, description = "delicious {suggestPopularTags} integration test with Negetive parameters")
     public void testDelicioussuggestPopularTagsWithNegetiveParameters() throws Exception {
 
-        final String jsonString =
-                "{" + '"' + "json_payload" + '"' + ": {" +
-                        '"' + "username" + '"' + ":" + '"' + connectorProperties.getProperty("username") + '"' + ","
-                        + '"' + "password" + '"' + ":" + '"' + connectorProperties.getProperty("password") + '"' + ","
-                        + '"' + "Apiurl" + '"' + ":" + '"' + "https://api.del.icio.us" + '"' + ","
-                        + '"' + "method" + '"' + ":" + '"' + "suggestPopularTags" + '"' + ","
-                        + '"' + "url" + '"' + ":" + '"' + "" + '"' + "} }";
-        System.out.println(jsonString);
+        String jsonRequestFilePath = pathToResourcesDirectory + "negative/suggestPopularTags.txt";
+        String rawString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String jsonString = addCredentials(rawString);
 
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("suggestPopularTags connector" + omElementC.toString());
+        System.out.println("suggestPopularTags connector" + omElementC.toString()+"\n");
         String parameters = "";
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/suggest?" + parameters, "", validAuthorization);
@@ -711,18 +638,17 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
     @Test(priority = 2, groups = {"wso2.esb"}, description = "delicious {lastUpdatedTime} integration test with Negetive parameters")
     public void testDeliciouslastUpdatedTimeWithNegetiveParameters() throws Exception {
 
-        final String jsonString =
-                "{" + '"' + "json_payload" + '"' + ": {" +
-                        '"' + "username" + '"' + ":" + '"' + "username" + '"' + ","
-                        + '"' + "password" + '"' + ":" + '"' + "password" + '"' + ","
-                        + '"' + "Apiurl" + '"' + ":" + '"' + "https://api.del.icio.us" + '"' + ","
-                        + '"' + "method" + '"' + ":" + '"' + "lastUpdatedTime" + '"' + " } }";
-        System.out.println(jsonString);
+        String jsonRequestFilePath = pathToResourcesDirectory + "negative/lastUpdatedTime.txt";
+        String rawString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        rawString = rawString.replace("invalidusername",connectorProperties.getProperty("invalidusername"));
+        rawString = rawString.replace("invalidpassword",connectorProperties.getProperty("invalidpassword"));
+        rawString = rawString.replace("address",connectorProperties.getProperty("Apiurl"));
+        final String jsonString = addCredentials(rawString);
 
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("lastUpdatedTime connector" + omElementC.toString());
+        System.out.println("lastUpdatedTime connector" + omElementC.toString()+"\n");
 
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/update", "", invalidAuthorization);
@@ -743,24 +669,19 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
     public void testDeliciousgetTagsWithNegativeParameters() throws Exception {
 
         String jsonRequestFilePath = pathToResourcesDirectory + "negative/getTags.txt";
-
         String rawString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
-
-        rawString = rawString.replace("dummyUsername",connectorProperties.getProperty("invalidusername"));
-        rawString = rawString.replace("dummyPassword",connectorProperties.getProperty("invalidpassword"));
-        rawString = rawString.replace("dummyApi",connectorProperties.getProperty("Apiurl"));
+        rawString = rawString.replace("invalidusername",connectorProperties.getProperty("invalidusername"));
+        rawString = rawString.replace("invalidpassword",connectorProperties.getProperty("invalidpassword"));
+        rawString = rawString.replace("address",connectorProperties.getProperty("Apiurl"));
         final String jsonString = addCredentials(rawString);
-        System.out.println(jsonString);
-
 
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("negativeGetTags connector"+omElementC.toString());
+        System.out.println("negativeGetTags connector"+omElementC.toString()+"\n");
 
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/tags/get", "", invalidAuthorization);
-
 
         System.out.println("negativeGetTags direct"+omElementD.toString());
 
@@ -779,17 +700,15 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
 
         String rawString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
 
-        rawString = rawString.replace("dummyUsername",connectorProperties.getProperty("invalidusername"));
-        rawString = rawString.replace("dummyPassword",connectorProperties.getProperty("invalidpassword"));
-        rawString = rawString.replace("dummyApi",connectorProperties.getProperty("Apiurl"));
+        rawString = rawString.replace("invalidusername",connectorProperties.getProperty("invalidusername"));
+        rawString = rawString.replace("invalidpassword",connectorProperties.getProperty("invalidpassword"));
+        rawString = rawString.replace("address",connectorProperties.getProperty("Apiurl"));
         final String jsonString = addCredentials(rawString);
-        System.out.println(jsonString);
-
 
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC= responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("allTagsBundles connector"+omElementC.toString());
+        System.out.println("allTagsBundles connector"+omElementC.toString()+"\n");
 
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD=responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl")+"/v1/tags/bundles/all?", "",invalidAuthorization);
@@ -810,19 +729,14 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
     public void testDelicioussetTagsBundlesWithNegativeParameters() throws Exception {
 
         String jsonRequestFilePath = pathToResourcesDirectory + "negative/setTagsBundles.txt";
-
         String rawString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
-
-        rawString = rawString.replace("dummyBundle","");
-        rawString = rawString.replace("dummyTags","");
         final String jsonString = addCredentials(rawString);
-        System.out.println(jsonString);
-
 
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("setTagsBundles connector"+omElementC.toString());
+        System.out.println("setTagsBundles connector"+omElementC.toString()+"\n");
+
         String parameters = "&bundle=" +""+"&tags="+"";
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/tags/bundles/set?"+parameters, "", validAuthorization);
@@ -843,19 +757,14 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
     public void testDeliciousdeleteTagsBundlesWithNegativeParameters() throws Exception {
 
         String jsonRequestFilePath = pathToResourcesDirectory + "negative/deleteTagsBundles.txt";
-
         String rawString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
-
         rawString = rawString.replace("dummyBundle",connectorProperties.getProperty("invalidBundle"));
-
         final String jsonString = addCredentials(rawString);
-        System.out.println(jsonString);
-
 
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("deleteTagsBundles connector :"+omElementC.toString());
+        System.out.println("deleteTagsBundles connector :"+omElementC.toString()+"\n");
 
         String parameters = "&bundle=" +connectorProperties.getProperty("invalidBundle");
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
@@ -866,7 +775,6 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         Assert.assertTrue(omElementC.toString().equals(omElementD.toString()));
 
     }
-
 
 
 
@@ -895,26 +803,20 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
 
         String rawString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
         rawString = rawString.replace("test_url",connectorProperties.getProperty("inputDescriptionWithOptional"));
+        rawString = rawString.replace("bookmarkurl",connectorProperties.getProperty("inputurl"));
         final String jsonString = addCredentials(rawString);
 
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("addNewPost connector" + omElementC.toString());
+        System.out.println("addNewPost connector" + omElementC.toString()+"\n");
 
-        //String parameters = "&url=www.example_direct.com&description=test_url2&extended=test_extended&tags=test";
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
-        //OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/add?" + parameters, "", validAuthorization);
-
-        //System.out.println("addNewPost direct" + omElementD.toString());
-
-        //Assert.assertTrue(omElementC.toString().equals(omElementD.toString()));
 
         OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/recent?&count=1", "", validAuthorization);
 
         System.out.println("addNewPost direct" + omElementD.toString());
 
-        //Assert.assertTrue(omElementC.toString().equals(omElementD.toString()));
         Assert.assertTrue(omElementD.getFirstElement().getAttributeValue(QName.valueOf("description")).equals(connectorProperties.getProperty("inputDescriptionWithOptional")));
 
 
@@ -935,7 +837,7 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("postGetAll" + omElementC.toString());
+        System.out.println("postGetAll" + omElementC.toString()+"\n");
 
         String parameters = "&tag_separator=comma&results=1";
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
@@ -943,7 +845,7 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
 
         System.out.println("postGetAll" + omElementD.toString());
 
-        Assert.assertTrue(omElementC.toString().equals(omElementD.toString()));
+        Assert.assertTrue(omElementC.getFirstElement().toString().equals(omElementD.getFirstElement().toString()));
 
     }
 
@@ -962,7 +864,7 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("getDates connector" + omElementC.toString());
+        System.out.println("getDates connector" + omElementC.toString()+"\n");
 
         String parameters = "&tag=test";
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
@@ -973,7 +875,6 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         Assert.assertTrue(omElementC.toString().equals(omElementD.toString()));
 
     }
-
 
 
     /**
@@ -990,7 +891,7 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("getPosts connector" + omElementC.toString());
+        System.out.println("getPosts connector" + omElementC.toString()+"\n");
 
         String parameters = "&tag=test&meta=yes&tag_separator=comma";
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
@@ -1017,7 +918,7 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("getRecentPosts connector" + omElementC.toString());
+        System.out.println("getRecentPosts connector" + omElementC.toString()+"\n");
 
         String parameters = "&tag=test&count=1";
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
@@ -1028,9 +929,6 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         Assert.assertTrue(omElementC.toString().equals(omElementD.toString()));
 
     }
-
-
-
 
 
     /**
@@ -1048,20 +946,16 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC= responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("Optional allTagsBundles connector:"+omElementC.toString());
+        System.out.println("Optional allTagsBundles connector:"+omElementC.toString()+"\n");
 
         String parameters = "&bundle=TestWSO2";
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD=responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl")+"/v1/tags/bundles/all?" + parameters, "",validAuthorization);
-
         System.out.println("Optional allTagsBundles Direct :"+omElementD.toString());
 
         Assert.assertTrue(omElementC.toString().equals(omElementD.toString()));
 
     }
-
-
-
 
 
     /**
@@ -1072,34 +966,23 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
 
         String jsonRequestFilePath = pathToResourcesDirectory + "optional/deletePost.txt";
 
-        final String rawString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        String rawString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        rawString = rawString.replace("bookmarkurl",connectorProperties.getProperty("inputurl"));
         final String jsonString = addCredentials(rawString);
 
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        System.out.println("deletePost connector" + omElementC.toString());
+        System.out.println("deletePost connector" + omElementC.toString()+"\n");
 
-        //String parameters = "&url=www.example_direct.com";
+        String parameters = "&url="+connectorProperties.getProperty("inputurl");
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
-        //OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/delete?" + parameters, "", validAuthorization);
-
-        // System.out.println("deletePost direct" + omElementD.toString());
-
-        // Assert.assertTrue(omElementC.toString().equals(omElementD.toString()));
-
-        OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/recent?&count=1", "", validAuthorization);
+        OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/get?"+parameters, "", validAuthorization);
 
         System.out.println("addNewPost direct" + omElementD.toString());
 
-        //Assert.assertTrue(omElementC.toString().equals(omElementD.toString()));
-        Assert.assertTrue(omElementD.getFirstElement().getAttributeValue(QName.valueOf("description"))!=connectorProperties.getProperty("inputDescriptionWithOptional"));
-
+        Assert.assertTrue(omElementD.getAttributeValue(QName.valueOf("code")).equals("no bookmarks"));
 
     }
 
 }
-
-
-
-

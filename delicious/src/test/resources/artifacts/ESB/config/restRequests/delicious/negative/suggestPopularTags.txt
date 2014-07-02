@@ -4,6 +4,6 @@
     "password":"%s",
     "Apiurl":"%s",
     "method":"suggestPopularTags",
-    "url":"www.yahoo.com"
+    "url":""
     }
 }

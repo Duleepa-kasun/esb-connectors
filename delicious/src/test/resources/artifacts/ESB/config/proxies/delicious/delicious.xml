@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+~  Copyright (c) 2005-2014, WSO2 Inc. (http://wso2.com) All Rights Reserved.
+~
+~  WSO2 Inc. licenses this file to you under the Apache License,
+~  Version 2.0 (the "License"); you may not use this file except
+~  in compliance with the License.
+~  You may obtain a copy of the License at
+~
+~    http://www.apache.org/licenses/LICENSE-2.0
+~
+~  Unless required by applicable law or agreed to in writing,
+~  software distributed under the License is distributed on an
+~  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~  KIND, either express or implied.  See the License for the
+~  specific language governing permissions and limitations
+~  under the License.
+-->
+
 <proxy xmlns="http://ws.apache.org/ns/synapse"
        name="delicious"
        transports="http,https"
@@ -33,10 +51,10 @@
                         </then>
                     </filter>
 
-                    <delicious.getAllBookmarks>
+                    <delicious.getAllPosts>
                         <tag_separator>{$ctx:tag_separator}</tag_separator>
                         <results>{$ctx:results}</results>
-                    </delicious.getAllBookmarks>
+                    </delicious.getAllPosts>
                 </case>
 
                 <case regex="addNewPost">
@@ -53,10 +71,10 @@
                     </filter>
 
                     <delicious.addNewPost>
-                        <inputUrl>{$ctx:inputUrl}</inputUrl>
-                        <inputDescription>{$ctx:inputDescription}</inputDescription>
-                        <inputExtended>{$ctx:inputExtended}</inputExtended>
-                        <inputTags>{$ctx:inputTags}</inputTags>
+                        <url>{$ctx:inputUrl}</url>
+                        <description>{$ctx:inputDescription}</description>
+                        <extended>{$ctx:inputExtended}</extended>
+                        <tags>{$ctx:inputTags}</tags>
                     </delicious.addNewPost>
                 </case>
 
@@ -75,15 +93,15 @@
                         </then>
                     </filter>
 
-                    <delicious.getDates>
-                        <datesTag>{$ctx:tag}</datesTag>
-                    </delicious.getDates>
+                    <delicious.getAllPostsDates>
+                        <tag>{$ctx:tag}</tag>
+                    </delicious.getAllPostsDates>
                 </case>
 
                 <case regex="deletePost">
                     <property name="delUrl" expression="json-eval($.json_payload.delUrl)"/>
                     <delicious.deletePost>
-                        <delUrl>{$ctx:delUrl}</delUrl>
+                        <url>{$ctx:delUrl}</url>
                     </delicious.deletePost>
                 </case>
 
@@ -101,9 +119,9 @@
                     </filter>
 
                     <delicious.getPosts>
-                        <gettag>{$ctx:tag}</gettag>
-                        <gettag_separator>{$ctx:tag_separator}</gettag_separator>
-                        <getmeta>{$ctx:meta}</getmeta>
+                        <tag>{$ctx:tag}</tag>
+                        <tag_separator>{$ctx:tag_separator}</tag_separator>
+                        <meta>{$ctx:meta}</meta>
                     </delicious.getPosts>
                 </case>
 
@@ -118,8 +136,8 @@
                     </filter>
 
                     <delicious.getRecentPosts>
-                        <recentTag>{$ctx:tag}</recentTag>
-                        <recentCount>{$ctx:count}</recentCount>
+                        <tag>{$ctx:tag}</tag>
+                        <count>{$ctx:count}</count>
                     </delicious.getRecentPosts>
                 </case>
 
