@@ -1,8 +1,8 @@
 proxyDirectoryRelativePath=/../src/test/resources/artifacts/ESB/config/proxies/delicious/
 resourceDirectoryRelativePath=/../src/test/resources/artifacts/ESB/config/restRequests/delicious/
 Apiurl=https://api.del.icio.us
-username=wso2delicious
-password=!2qwasZX
+username=duleepa_kasun
+password=roadruner1
 invalidusername=username
 invalidpassword=password
 
