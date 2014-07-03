@@ -568,7 +568,7 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
 
-        String parameters = "";
+        String parameters = "&url=";
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/suggest?" + parameters, "", validAuthorization);
 

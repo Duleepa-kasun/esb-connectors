@@ -73,6 +73,7 @@ STEPS:
  NOTE : Following Delicious account, can be used for run the integration tests.
       username: wso2delicious
       password: !2qwasZX
+      access token: 10005597-dbbb1db699dec98931cc432f944f714f
 
 
 
