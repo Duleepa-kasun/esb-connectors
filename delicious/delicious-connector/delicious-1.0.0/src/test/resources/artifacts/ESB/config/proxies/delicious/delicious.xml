@@ -38,12 +38,13 @@
                         xpath="(get-property('method') = 'postGetAllwithOauth' )">
                     <then>
                         <property name="accessToken" expression="json-eval($.json_payload.token)"/>
+			<accessToken>{$ctx:accessToken}</accessToken>
                     </then>
+		    <else>
+			<username>{$ctx:username}</username>
+	                <password>{$ctx:password}</password>
+		    </else>
                 </filter>
-
-                <accessToken>{$ctx:accessToken}</accessToken>
-                <username>{$ctx:username}</username>
-                <password>{$ctx:password}</password>
                 <uri>{$ctx:uri}</uri>
 
             </delicious.init>
