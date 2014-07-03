@@ -33,12 +33,13 @@
 
 
 
+            <filter xpath="(get-property('method') = 'postGetAllwithOauth' )">
+                <then>
+                    <property name="accessToken" expression="json-eval($.json_payload.token)"/>
+                </then>
+            </filter>
+
             <delicious.init>
-               <filter xpath="(get-property('method') = 'postGetAllwithOauth' )">
-                    <then>
-                        <property name="accessToken" expression="json-eval($.json_payload.token)"/>		
-                    </then>       
-                </filter>  
 
             	<accessToken>{$ctx:accessToken}</accessToken>
   		<username>{$ctx:username}</username>
@@ -46,6 +47,7 @@
                 <uri>{$ctx:uri}</uri>
 
             </delicious.init>
+
 
             <switch source="get-property('method')">
 
