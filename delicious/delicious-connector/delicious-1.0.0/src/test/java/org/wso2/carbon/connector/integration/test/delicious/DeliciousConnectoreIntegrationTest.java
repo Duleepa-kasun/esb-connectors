@@ -33,7 +33,6 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
     protected static final String CONNECTOR_NAME = "delicious-connector-1.0.0";
     private String validAuthorization;
     private String invalidAuthorization;
-    private String OauthToken;
 
     @BeforeTest(alwaysRun = true)
     protected void init() throws Exception {
@@ -41,9 +40,6 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
 
         String concatString = connectorProperties.getProperty("username") + ":" + connectorProperties.getProperty("password");
         validAuthorization = new String(Base64.encodeBase64(concatString.getBytes()));
-
-        OauthToken=connectorProperties.getProperty("accessToken");
-
 
         String invalidConcatString = connectorProperties.getProperty("invalidusername") + ":" + connectorProperties.getProperty("invalidpassword");
         invalidAuthorization = new String(Base64.encodeBase64(invalidConcatString.getBytes()));
@@ -72,14 +68,15 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
         String jsonRequestFilePath = pathToResourcesDirectory + "postGetAllwithOauth.txt";
 
         String rawString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
-        rawString = rawString.replace("accessToken",connectorProperties.getProperty("accessToken"));
+        rawString = rawString.replace("clientId",connectorProperties.getProperty("client_id"));
+        rawString = rawString.replace("clientSecret",connectorProperties.getProperty("client_secret"));
         final String jsonString = addCredentials(rawString);
 
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
-
+        System.out.println(omElementC.toString());
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
-        OMElement omElementD = responseDirect.sendXMLRequestWithBearer(connectorProperties.getProperty("Apiurl") + "/v1/posts/all", "",OauthToken );
+        OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/all", "", validAuthorization);
 
         Assert.assertTrue(omElementC.getFirstElement().toString().equals(omElementD.getFirstElement().toString()));
     }
@@ -388,6 +385,29 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
 
 
 
+
+    /**
+     * Oauth Negetive test case for postGetAll method with Negetive parameters.
+     */
+    @Test(priority = 2, groups = {"wso2.esb"}, description = "delicious {postGetAll} integration test with Negetive parameters")
+    public void testOauthDeliciouspostGetAllWithNegetiveParameters() throws Exception {
+
+        String jsonRequestFilePath = pathToResourcesDirectory + "negative/postGetAllwithOauth.txt";
+
+        String rawString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        rawString = rawString.replace("clientId",connectorProperties.getProperty("invalidclient_id"));
+        rawString = rawString.replace("address",connectorProperties.getProperty("Apiurl"));
+        rawString = rawString.replace("clientSecret",connectorProperties.getProperty("invalidclient_secret"));
+        final String jsonString = addCredentials(rawString);
+
+        ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
+        OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
+        System.out.println(omElementC.toString());
+        ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
+        OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/all", "", invalidAuthorization);
+
+        Assert.assertTrue(omElementC.toString().equals(omElementD.toString()));
+    }
 
 
 

@@ -514,60 +514,6 @@ public class ConnectorIntegrationUtil {
     //////////////////
 
 
-    public static OMElement sendXMLRequestWithBearer(String addUrl, String query,String oauth2) throws MalformedURLException, IOException,
-            XMLStreamException {
-
-        String charset = "UTF-8";
-        URLConnection connection = new URL(addUrl).openConnection();
-        connection.setDoOutput(true);
-
-        connection.setRequestProperty("Authorization","Bearer "+oauth2);
-        connection.setRequestProperty("Accept-Encoding","deflate");
-        OutputStream output = null;
-        try {
-            output = connection.getOutputStream();
-            output.write(query.getBytes(charset));
-        } finally {
-            if (output != null) {
-                try {
-                    output.close();
-                } catch (IOException logOrIgnore) {
-                    log.error("Error while closing the connection");
-                }
-            }
-        }
-
-        HttpURLConnection httpConn = (HttpURLConnection) connection;
-        InputStream response;
-
-        if (httpConn.getResponseCode() >= 400) {
-            response = httpConn.getErrorStream();
-        } else {
-            response = connection.getInputStream();
-        }
-
-        String out = "{}";
-        if (response != null) {
-            StringBuilder sb = new StringBuilder();
-            byte[] bytes = new byte[1024];
-            int len;
-            while ((len = response.read(bytes)) != -1) {
-                sb.append(new String(bytes, 0, len));
-            }
-
-            if (!sb.toString().trim().isEmpty()) {
-                out = sb.toString();
-            }
-        }
-
-        OMElement omElement = AXIOMUtil.stringToOM(out);
-
-        return omElement;
-
-    }
-
-    ///////////////////
-
 
     public static OMElement getXmlResponse(String httpMethod, String addUrl, String query) throws MalformedURLException, IOException,
             XMLStreamException {

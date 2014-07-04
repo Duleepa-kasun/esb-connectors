@@ -40,40 +40,26 @@ STEPS:
    <messageBuilder contentType="application/octet-stream" class="org.wso2.carbon.relay.BinaryRelayBuilder"/>
    
 
- 3. Create a Delicious account and derive the access token:
-  i)  Using the URL "https://www.delicious.com/" create a Delicious account.
-  ii) Derive the access token by following the instructions.
-
-    a)  Create an application in Delicious
-        Then you will get a Client ID and Client Secret
-
-    b)  Use that Client ID Send the request for users’ authorization.
-        https://delicious.com/auth/authorize?client_id="CLIENT_ID"& redirect_uri=http://www.example.com/redirect
-
-    c)  Then you will get a Response like 
-        http://www.example.com/redirect?code="AUTHORIZAN-CODE"
-
-    d)  Then send the above code for get Access Token
-        https://avosapi.delicious.com/api/v1/oauth/token?client_id="CLIENT-ID"
-        &client_secret="CLIENT-SECRETE" &grant_type=code&code="AUTHORIZAN-CODE"
-
-  4. Update the Delicious properties file at location "{PATH_TO_SOURCE_BUNDLE}/delicious-connector/delicious-connector-1.0.0/org.wso2.carbon.connector/src/test/resources/artifacts/ESB/connector/config" as below.
+  4. Update the Delicious properties file at location "{PATH_TO_SOURCE_BUNDLE}/delicious-connector/delicious-connector-1.0.0/src/test/resources/artifacts/ESB/connector/config" as below.
    
-    i) accessToken - Use the access token you got from step 3.
+    i) Oauth2
+	Client Id,Client Secret, User name, Password  
         
         or
 
-    ii) use your delicious userneme and password.
+    ii) Basic
+	Use your delicious userneme and password olny.
 
     
- 5. Navigate to "{PATH_TO_SOURCE_BUNDLE}/delicious-connector/delicious-connector-1.0.0/org.wso2.carbon.connector/" and run the following command.
+ 5. Navigate to "{PATH_TO_SOURCE_BUNDLE}/delicious-connector/delicious-connector-1.0.0/" and run the following command.
       $ mvn clean install
 
 
  NOTE : Following Delicious account, can be used for run the integration tests.
       username: wso2delicious
       password: !2qwasZX
-      access token: 10005597-dbbb1db699dec98931cc432f944f714f
+      Client Id: b7a9418896428755bda9274bb53a27be
+      Client Secret: d3cba665ddf8e5c3a1490faf0787bf64
 
 
 

@@ -32,18 +32,25 @@
             <property name="method" expression="json-eval($.json_payload.method)"/>
 
 
-
             <filter xpath="(get-property('method') = 'postGetAllwithOauth' )">
                 <then>
-                    <property name="accessToken" expression="json-eval($.json_payload.token)"/>
+                    <property name="client_id" expression="json-eval($.json_payload.client_id)"/>
+                    <property name="client_secret" expression="json-eval($.json_payload.client_secret)"/>
+                    <property name="authType" expression="json-eval($.json_payload.authType)"/>
                 </then>
+
+                <else>
+                    <property name="authType" value="Basic"/>
+                </else>
             </filter>
 
             <delicious.init>
 
-            	<accessToken>{$ctx:accessToken}</accessToken>
-  		<username>{$ctx:username}</username>
+            	<client_id>{$ctx:client_id}</client_id>
+            	<client_secret>{$ctx:client_secret}</client_secret>
+  		        <username>{$ctx:username}</username>
                	<password>{$ctx:password}</password>
+               	<authType>{$ctx:authType}</authType>
                 <uri>{$ctx:uri}</uri>
 
             </delicious.init>
