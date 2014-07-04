@@ -49,32 +49,6 @@
             </else>
         </filter>
 
-
-
-
-
-
-        <!--filter
-                xpath="(not(get-property('delicious.accessToken') = '' or (not(string(get-property('delicious.accessToken'))))))">
-            <then>
-
-                <property name="Authorization"
-                          expression="fn:concat('Bearer ', get-property('delicious.accessToken'))"
-                          scope="transport"
-                          type="STRING" />
-
-            </then>
-            <else>
-                <property name="delicious.for.auth"
-                          expression="fn:concat($ctx:delicious.username,':',$ctx:delicious.password)" />
-
-                <property name="Authorization"
-                          expression="fn:concat('Basic ', base64Encode($ctx:delicious.for.auth))"
-                          scope="transport" />
-            </else>
-
-        </filter-->
-
         <property name="uri.var.delicious.url" expression="$func:uri" />
 
     </sequence>
