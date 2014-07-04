@@ -74,7 +74,7 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
 
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
-        System.out.println(omElementC.toString());
+
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/all", "", validAuthorization);
 
@@ -402,7 +402,7 @@ public class DeliciousConnectoreIntegrationTest extends ConnectorIntegrationTest
 
         ConnectorIntegrationUtil responseConnector = new ConnectorIntegrationUtil();
         OMElement omElementC = responseConnector.getXmlResponse("POST", getProxyServiceURL("delicious"), jsonString);
-        System.out.println(omElementC.toString());
+
         ConnectorIntegrationUtil responseDirect = new ConnectorIntegrationUtil();
         OMElement omElementD = responseDirect.sendXMLRequestWithBasic(connectorProperties.getProperty("Apiurl") + "/v1/posts/all", "", invalidAuthorization);
 
